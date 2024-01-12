@@ -2,6 +2,9 @@ apiVersion: v2
 name: smtp4dev
 description: A Helm chart for helm-smtp4dev
 icon: https://raw.githubusercontent.com/rnwood/smtp4dev/master/logo.svg
+maintainers:
+  - name: iMio
+    url: https://imio.github.io/helm-charts/
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
