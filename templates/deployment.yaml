@@ -1,0 +1,109 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "helm-smtp4dev.fullname" . }}
+  labels:
+    {{- include "helm-smtp4dev.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "helm-smtp4dev.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "helm-smtp4dev.labels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "helm-smtp4dev.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: ServerOptions__BasePath
+              value: {{ .Values.smtp4dev.ServerOptions__BasePath | toString | quote }}
+            - name: ServerOptions__Hostname
+              value: {{ .Values.smtp4dev.ServerOptions__Hostname | toString | quote }}
+            - name: ServerOptions__LockSettings
+              value: {{ .Values.smtp4dev.ServerOptions__LockSettings | toString | quote }}
+            - name: ServerOptions__Database
+              value: {{ .Values.smtp4dev.ServerOptions__Database | toString | quote }}
+            - name: ServerOptions__NumberOfMessagesToKeep
+              value: {{ .Values.smtp4dev.ServerOptions__NumberOfMessagesToKeep | toString | quote }}
+            - name: ServerOptions__NumberOfSessionsToKeep
+              value: {{ .Values.smtp4dev.ServerOptions__NumberOfSessionsToKeep | toString | quote }}
+            - name: ServerOptions__TlsMode
+              value: {{ .Values.smtp4dev.ServerOptions__TlsMode | toString | quote }}
+            - name: ServerOptions__TlsCertificate
+              value: {{ .Values.smtp4dev.ServerOptions__TlsCertificate | toString | quote }}
+            - name: RelayOptions__SmtpServer
+              value: {{ .Values.smtp4dev.RelayOptions__SmtpServer | toString | quote }}
+            - name: RelayOptions__SmtpPort
+              value: {{ .Values.smtp4dev.RelayOptions__SmtpPort | toString | quote }}
+            - name: RelayOptions__AllowedEmailsString
+              value: {{ .Values.smtp4dev.RelayOptions__AllowedEmailsString | toString | quote }}
+            - name: RelayOptions__SenderAddress
+              value: {{ .Values.smtp4dev.RelayOptions__SenderAddress | toString | quote }}
+            - name: RelayOptions__Login
+              value: {{ .Values.smtp4dev.RelayOptions__Login | toString | quote }}
+            - name: RelayOptions__Password
+              value: {{ .Values.smtp4dev.RelayOptions__Password | toString | quote }}
+            - name: ServerOptions__ImapPort
+              value: {{ .Values.smtp4dev.ServerOptions__ImapPort | toString | quote }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+            - name: smtp
+              containerPort: 25
+              protocol: TCP
+            - name: imap
+              containerPort: 143
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
