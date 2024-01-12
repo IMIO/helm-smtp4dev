@@ -1,5 +1,5 @@
 apiVersion: v2
-name: helm-smtp4dev
+name: smtp4dev
 description: A Helm chart for helm-smtp4dev
 icon: https://raw.githubusercontent.com/rnwood/smtp4dev/master/logo.svg
 # A chart can be either an 'application' or a 'library' chart.
