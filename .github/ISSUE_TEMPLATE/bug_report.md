@@ -17,7 +17,7 @@ Be ready for followup questions, and please respond in a timely manner. If we ca
 **Describe the bug**
 A clear and concise description of what the bug is.
 
-**Version of Helm, Kubernetes and the plausible-analytics chart**:
+**Version of Helm, Kubernetes and the smtp4dev chart**:
 
 
 **What happened**:
