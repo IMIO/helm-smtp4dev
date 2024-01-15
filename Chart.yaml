@@ -12,7 +12,7 @@ sources:
   - https://github.com/imio/helm-charts
   - https://github.com/imio/helm-smtp4dev
   - https://github.com/rnwood/smtp4dev
-icon: https://raw.githubusercontent.com/rnwood/smtp4dev/master/logo.svg
+icon: https://github.com/rnwood/smtp4dev/blob/master/Rnwood.Smtp4dev/ClientApp/public/logo.png
 maintainers:
   - name: IMIO
     url: https://github.com/IMIO/
