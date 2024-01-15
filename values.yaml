@@ -10,6 +10,7 @@ image:
   # Overrides the image tag whose default is the chart appVersion.
   tag: "v3"
 
+# smtp4dev configuration (env variables)
 smtp4dev:
   ServerOptions__BasePath: /smtp4dev
   ServerOptions__Hostname: smtp4dev
@@ -75,6 +76,24 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+
+# persistence
+persistence:
+  enabled: true
+  # A manually managed Persistent Volume and Claim
+  # Requires persistence.enabled: true
+  # If defined, PVC must be created manually before volume will be bound
+  existingClaim: ""
+  # smtp4dev data Persistent Volume Storage Class
+  # If defined, storageClassName: <storageClass>
+  # If set to "-", storageClassName: "", which disables dynamic provisioning
+  # If undefined (the default) or set to null, no storageClassName spec is
+  #   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  #   GKE, AWS & OpenStack)
+  storageClass: "standard"
+  accessModes:
+    - ReadWriteOnce
+  size: 1Gi
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
