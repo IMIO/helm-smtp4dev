@@ -3,7 +3,7 @@ name: smtp4dev
 description: A Helm chart for helm-smtp4dev
 type: application
 version: 0.0.2
-appVersion: "3.1.4"
+appVersion: "3.3.3"
 keywords:
   - smtp4dev
   - fake smtp email server
