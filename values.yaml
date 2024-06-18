@@ -8,11 +8,12 @@ image:
   repository: rnwood/smtp4dev
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "v3"
+  tag: "3.6.1"
 
 # smtp4dev configuration (env variables)
 smtp4dev:
   ServerOptions__BasePath: /smtp4dev
+  ServerOptions_Urls: http://*:80
   ServerOptions__Hostname: smtp4dev
   ServerOptions__LockSettings: true
   ServerOptions__Database: database.db
@@ -132,3 +133,6 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+## Extra environment variables definition
+extraEnv: []

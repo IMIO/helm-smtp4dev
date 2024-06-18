@@ -39,6 +39,8 @@ spec:
           env:
             - name: ServerOptions__BasePath
               value: {{ .Values.smtp4dev.ServerOptions__BasePath | toString | quote }}
+            - name: ServerOptions_Urls
+              value: {{ .Values.smtp4dev.ServerOptions__Urls | toString | quote }}
             - name: ServerOptions__Hostname
               value: {{ .Values.smtp4dev.ServerOptions__Hostname | toString | quote }}
             - name: ServerOptions__LockSettings
@@ -67,6 +69,9 @@ spec:
               value: {{ .Values.smtp4dev.RelayOptions__Password | toString | quote }}
             - name: ServerOptions__ImapPort
               value: {{ .Values.smtp4dev.ServerOptions__ImapPort | toString | quote }}
+            {{- if .Values.extraEnv }}
+            {{- toYaml .Values.extraEnv | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
