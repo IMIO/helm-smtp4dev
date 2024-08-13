@@ -14,7 +14,8 @@ jobs:
   release:
     permissions:
       contents: write
-    runs-on: self-hosted
+    runs-on:
+      group: self-hosted
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Helm Release
