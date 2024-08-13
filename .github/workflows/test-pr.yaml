@@ -8,9 +8,8 @@
         runs-on: ubuntu-latest
         steps:
           - name: Lint and Test Charts
-            uses: IMIO/gha/helm-test-notify@main
+            uses: IMIO/gha/helm-test-notify@v3.9.2
             with:
               HELM_RELEASE: smtp4dev
               HELM_NAMESPACE: smtp4dev
-              MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
     

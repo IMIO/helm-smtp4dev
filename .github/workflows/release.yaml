@@ -1,3 +1,4 @@
+---
 name: Helm Release
 
 on:
@@ -19,7 +20,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Helm Release
-        uses: IMIO/gha/helm-release-notify@main
+        uses: IMIO/gha/helm-release-notify@v3.9.2
         with:
           TARGET_DIR: smtp4dev
           MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
