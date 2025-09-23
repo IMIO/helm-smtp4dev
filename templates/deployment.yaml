@@ -53,20 +53,32 @@ spec:
               value: {{ .Values.smtp4dev.ServerOptions__NumberOfSessionsToKeep | toString | quote }}
             - name: ServerOptions__TlsMode
               value: {{ .Values.smtp4dev.ServerOptions__TlsMode | toString | quote }}
+            {{- if .Values.smtp4dev.ServerOptions__TlsCertificate }}
             - name: ServerOptions__TlsCertificate
               value: {{ .Values.smtp4dev.ServerOptions__TlsCertificate | toString | quote }}
+            {{- end }}
+            {{- if .Values.smtp4dev.RelayOptions__SmtpServer }}
             - name: RelayOptions__SmtpServer
               value: {{ .Values.smtp4dev.RelayOptions__SmtpServer | toString | quote }}
+            {{- end }}
             - name: RelayOptions__SmtpPort
               value: {{ .Values.smtp4dev.RelayOptions__SmtpPort | toString | quote }}
+            {{- if .Values.smtp4dev.RelayOptions__AllowedEmailsString }}
             - name: RelayOptions__AllowedEmailsString
               value: {{ .Values.smtp4dev.RelayOptions__AllowedEmailsString | toString | quote }}
+            {{- end }}
+            {{- if .Values.smtp4dev.RelayOptions__SenderAddress }}
             - name: RelayOptions__SenderAddress
               value: {{ .Values.smtp4dev.RelayOptions__SenderAddress | toString | quote }}
+            {{- end }}
+            {{- if .Values.smtp4dev.RelayOptions__Login }}
             - name: RelayOptions__Login
               value: {{ .Values.smtp4dev.RelayOptions__Login | toString | quote }}
+            {{- end }}
+            {{- if .Values.smtp4dev.RelayOptions__Password }}
             - name: RelayOptions__Password
               value: {{ .Values.smtp4dev.RelayOptions__Password | toString | quote }}
+            {{- end }}
             - name: ServerOptions__ImapPort
               value: {{ .Values.smtp4dev.ServerOptions__ImapPort | toString | quote }}
             {{- if .Values.extraEnv }}
@@ -74,35 +86,114 @@ spec:
             {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.port }}
+              containerPort: {{ .Values.service.port | default 80 }}
               protocol: TCP
             - name: smtp
-              containerPort: 25
+              containerPort: {{ .Values.smtp4dev.ServerOptions__SmtpPort | default 25 }}
               protocol: TCP
             - name: imap
-              containerPort: 143
+              containerPort: {{ .Values.smtp4dev.ServerOptions__ImapPort | default 143 }}
               protocol: TCP
+          {{- if .Values.probes.startup.enabled }}
+          startupProbe:
+            {{- if eq .Values.probes.startup.type "http" }}
+            httpGet:
+              path: {{ .Values.probes.startup.httpGet.path }}
+              port: {{ .Values.probes.startup.httpGet.port }}
+              {{- if .Values.probes.startup.httpGet.scheme }}
+              scheme: {{ .Values.probes.startup.httpGet.scheme }}
+              {{- end }}
+              {{- if .Values.probes.startup.httpGet.httpHeaders }}
+              httpHeaders:
+                {{- toYaml .Values.probes.startup.httpGet.httpHeaders | nindent 16 }}
+              {{- end }}
+            {{- else if eq .Values.probes.startup.type "tcp" }}
+            tcpSocket:
+              port: {{ .Values.probes.startup.tcpSocket.port }}
+            {{- else if eq .Values.probes.startup.type "exec" }}
+            exec:
+              command:
+                {{- toYaml .Values.probes.startup.exec.command | nindent 16 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probes.startup.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.startup.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.startup.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.startup.failureThreshold }}
+            successThreshold: {{ .Values.probes.startup.successThreshold }}
+          {{- end }}
+          {{- if .Values.probes.liveness.enabled }}
           livenessProbe:
+            {{- if eq .Values.probes.liveness.type "http" }}
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.probes.liveness.httpGet.path }}
+              port: {{ .Values.probes.liveness.httpGet.port }}
+              {{- if .Values.probes.liveness.httpGet.scheme }}
+              scheme: {{ .Values.probes.liveness.httpGet.scheme }}
+              {{- end }}
+              {{- if .Values.probes.liveness.httpGet.httpHeaders }}
+              httpHeaders:
+                {{- toYaml .Values.probes.liveness.httpGet.httpHeaders | nindent 16 }}
+              {{- end }}
+            {{- else if eq .Values.probes.liveness.type "tcp" }}
+            tcpSocket:
+              port: {{ .Values.probes.liveness.tcpSocket.port }}
+            {{- else if eq .Values.probes.liveness.type "exec" }}
+            exec:
+              command:
+                {{- toYaml .Values.probes.liveness.exec.command | nindent 16 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.liveness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold }}
+            successThreshold: {{ .Values.probes.liveness.successThreshold }}
+          {{- end }}
+          {{- if .Values.probes.readiness.enabled }}
           readinessProbe:
+            {{- if eq .Values.probes.readiness.type "http" }}
             httpGet:
-              path: /
-              port: http
+              path: {{ .Values.probes.readiness.httpGet.path }}
+              port: {{ .Values.probes.readiness.httpGet.port }}
+              {{- if .Values.probes.readiness.httpGet.scheme }}
+              scheme: {{ .Values.probes.readiness.httpGet.scheme }}
+              {{- end }}
+              {{- if .Values.probes.readiness.httpGet.httpHeaders }}
+              httpHeaders:
+                {{- toYaml .Values.probes.readiness.httpGet.httpHeaders | nindent 16 }}
+              {{- end }}
+            {{- else if eq .Values.probes.readiness.type "tcp" }}
+            tcpSocket:
+              port: {{ .Values.probes.readiness.tcpSocket.port }}
+            {{- else if eq .Values.probes.readiness.type "exec" }}
+            exec:
+              command:
+                {{- toYaml .Values.probes.readiness.exec.command | nindent 16 }}
+            {{- end }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
+            successThreshold: {{ .Values.probes.readiness.successThreshold }}
+          {{- end }}
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}          
+            {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
-          - name: smtp4dev
-            mountPath: /smtp4dev
-            readOnly: false
+            - name: smtp4dev
+              mountPath: /smtp4dev
+              readOnly: false
+            {{- if .Values.volumeMounts }}
+            {{- toYaml .Values.volumeMounts | nindent 12 }}
+            {{- end }}
       volumes:
         - name: smtp4dev
         {{- if .Values.persistence.enabled }}
           persistentVolumeClaim:
-            claimName: {{ .Values.persistence.existingClaim | default (include "helm-smtp4dev.fullname" .) }} 
+            claimName: {{ .Values.persistence.existingClaim | default (include "helm-smtp4dev.fullname" .) }}
         {{- else }}
           emptyDir: {}
+        {{- end }}
+        {{- if .Values.volumes }}
+        {{- toYaml .Values.volumes | nindent 8 }}
         {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
