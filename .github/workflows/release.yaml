@@ -19,9 +19,13 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Helm Release
-        uses: IMIO/gha/helm-release-notify@v3.9.3
+        uses: imio/gha/helm-release-notify@v8 
         with:
-          TARGET_DIR: smtp4dev
-          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
+          HELM_VERSION: '4.2.3'                      
           APP_ID: ${{ secrets.APP_ID }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          TARGET_DIR: smtp4dev
+          SIGNER_KEY: ${{ secrets.HELM_SIGNER_KEY }}
+          SIGNER_KEY_ID: ${{ secrets.HELM_SIGNER_KEY_ID }}
+          SIGNER_KEY_PASSPHRASE: ${{ secrets.HELM_SIGNER_KEY_PASSPHRASE }}
+          MATTERMOST_WEBHOOK_URL: ${{ secrets.COMMON_MATTERMOST_WEBHOOK_URL }}
